@@ -1,0 +1,126 @@
+<div class="container-fluid bg-body-tertiary px-2 px-sm-3 px-md-4 py-2">
+  <header class="bg-primary text-center mt-2 mb-2 p-2 rounded">
+    <h2 class="text-white mb-0">ToDo App</h2>
+    <p class="text-white">Advanced version with filter</p>
+  </header>
+
+  <div class="row justify-content-center mb-3">
+    <div class="col-12 col-md-10">
+      <form [formGroup]="form">
+        <formly-form [model]="model" [fields]="fields" [form]="form"></formly-form>
+      </form>
+      <div class="d-flex justify-content-end flex-wrap gap-2 mt-2">
+        <button type="submit" (click)="submit()" class="btn btn-success">
+          {{ isEdit ? 'Update Task' : 'Add Task' }}
+        </button>
+        <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-bottom border-2 border-black mt-2"></div>
+
+  <!-- Filters -->
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="row g-lg-5">
+      <!-- Date Filter -->
+      <div class="col-12 col-md-3">
+        <select class="form-select" #dateDropdown>
+          <option value="all">Date</option>
+          <option value="taskName">Today</option>
+          <option value="dueDate">This Week</option>
+          <option value="dueDate">Last Week</option>
+          <option value="dueDate">This Month</option>
+          <option value="dueDate">Last Month</option>
+          <option value="dueDate">Custom Date</option>
+        </select>
+      </div>
+
+      <!-- Search Filter Group -->
+      <div class="col-12 col-md-9">
+        <div class="input-group w-75">
+          <select class="form-select w-25" #dropdown>
+            <option value="all">All</option>
+            <option value="taskName">Task Name</option>
+            <option value="dueDate">Due Date</option>
+          </select>
+          <input
+            type="text"
+            class="form-control w-25"
+            placeholder="Search..."
+            [(ngModel)]="searchText"
+            (ngModelChange)="onSearchTextChange($event)"
+          />
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="search()"
+            ngbTooltip="Search"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              width="16"
+              height="16"
+            >
+              <path
+                fill="white"
+                d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            (click)="clearFilter()"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Task Table -->
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="search-results overflow-auto" style="max-height: 300px;" 
+           infiniteScroll [infiniteScrollDistance]="2"
+           [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+        <table class="table table-hover table-striped align-middle">
+          <thead class="table-dark sticky-top">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Task Name</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (task of taskList; track task.name; let i = $index) {
+            <tr>
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ task.taskName }}</td>
+              <td>{{ task.dueDate }}</td>
+              <td>
+                <div class="btn-group">
+                  <button class="btn btn-warning btn-sm" (click)="onEdit(task)">Edit</button>
+                  <button class="btn btn-secondary btn-sm" (click)="removeTask(task.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        <ng-template [ngIf]="taskList.length === 0">
+          <div class="text-center text-secondary pt-5 pb-5">
+            <h3>No data to display</h3>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
